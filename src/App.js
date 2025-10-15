@@ -17,14 +17,12 @@ const TransportProblemSolver = () => {
   const [showFictitious, setShowFictitious] = useState(false);
   const [totalCost, setTotalCost] = useState(0);
 
-  // Проверка баланса
   const checkBalance = () => {
     const totalSupply = supply.reduce((a, b) => a + b, 0);
     const totalDemand = demand.reduce((a, b) => a + b, 0);
     return { balanced: totalSupply === totalDemand, totalSupply, totalDemand };
   };
 
-  // Метод северо-западного угла
   const solveNorthWestCorner = async () => {
     setIsSolving(true);
     setCurrentStep(0);
@@ -34,7 +32,6 @@ const TransportProblemSolver = () => {
     let adjustedDemand = [...demand];
     let adjustedCosts = [...costs.map(row => [...row])];
     
-    // Добавление фиктивного поставщика/потребителя при необходимости
     if (!balance.balanced) {
       setShowFictitious(true);
       if (balance.totalSupply > balance.totalDemand) {
@@ -64,7 +61,6 @@ const TransportProblemSolver = () => {
       remainingSupply[i] -= quantity;
       remainingDemand[j] -= quantity;
 
-      // Анимация шага
       await new Promise(resolve => setTimeout(resolve, 1000));
       setSolution([...solutionMatrix.map(row => [...row])]);
       setCurrentStep(++step);
@@ -134,7 +130,6 @@ const TransportProblemSolver = () => {
         </button>
       </div>
 
-      {/* Таблица ввода данных */}
       <div className="input-table">
         <h3>Исходные данные</h3>
         <table>
@@ -189,7 +184,6 @@ const TransportProblemSolver = () => {
         </table>
       </div>
 
-      {/* Информация о балансе */}
       <div className={`balance-info ${!balance.balanced ? 'unbalanced' : ''}`}>
         <h3>Баланс системы:</h3>
         <p>Сумма запасов: {balance.totalSupply}</p>
@@ -203,7 +197,6 @@ const TransportProblemSolver = () => {
         )}
       </div>
 
-      {/* Отображение решения */}
       {solution.length > 0 && (
         <div className="solution">
           <h3>
