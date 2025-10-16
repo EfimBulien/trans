@@ -1,16 +1,22 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import './App.css';
 
 const TransportProblemSolver = () => {
-  const [suppliers, setSuppliers] = useState(3);
-  const [consumers, setConsumers] = useState(3);
-  const [supply, setSupply] = useState([100, 150, 200]);
-  const [demand, setDemand] = useState([120, 130, 200]);
-  const [costs, setCosts] = useState([
+  const defaultSuppliers = 3;
+  const defaultConsumers = 3;
+  const defaultSupply = [100, 150, 200];
+  const defaultDemand = [120, 130, 200];
+  const defaultCosts = [
     [2, 3, 1],
     [5, 4, 8],
     [5, 6, 8]
-  ]);
+  ];
+
+  const [suppliers, setSuppliers] = useState(defaultSuppliers);
+  const [consumers, setConsumers] = useState(defaultConsumers);
+  const [supply, setSupply] = useState([...defaultSupply]);
+  const [demand, setDemand] = useState([...defaultDemand]);
+  const [costs, setCosts] = useState(defaultCosts.map(row => [...row]));
   const [solution, setSolution] = useState([]);
   const [isSolving, setIsSolving] = useState(false);
   const [currentStep, setCurrentStep] = useState(0);
@@ -104,10 +110,37 @@ const TransportProblemSolver = () => {
   };
 
   const resetProblem = () => {
+    setSuppliers(defaultSuppliers);
+    setConsumers(defaultConsumers);
+    setSupply([...defaultSupply]);
+    setDemand([...defaultDemand]);
+    setCosts(defaultCosts.map(row => [...row]));
     setSolution([]);
     setCurrentStep(0);
-    setTotalCost(0);
     setShowFictitious(false);
+    setTotalCost(0);
+  };
+
+  const generateRandomData = () => {
+    const rand = (min, max) => Math.floor(Math.random() * (max - min + 1)) + min;
+    const newSuppliers = rand(2, 5);
+    const newConsumers = rand(2, 5);
+
+    const newSupply = Array.from({ length: newSuppliers }, () => rand(50, 300));
+    const newDemand = Array.from({ length: newConsumers }, () => rand(50, 300));
+    const newCosts = Array.from({ length: newSuppliers }, () =>
+      Array.from({ length: newConsumers }, () => rand(1, 10))
+    );
+
+    setSuppliers(newSuppliers);
+    setConsumers(newConsumers);
+    setSupply(newSupply);
+    setDemand(newDemand);
+    setCosts(newCosts);
+    setSolution([]);
+    setShowFictitious(false);
+    setCurrentStep(0);
+    setTotalCost(0);
   };
 
   const balance = checkBalance();
@@ -120,6 +153,7 @@ const TransportProblemSolver = () => {
       <div className="control-panel">
         <button onClick={addSupplier}>+ Добавить поставщика</button>
         <button onClick={addConsumer}>+ Добавить потребителя</button>
+        <button onClick={generateRandomData}>🎲 Случайные данные</button>
         <button onClick={resetProblem}>Сброс</button>
         <button 
           onClick={solveNorthWestCorner} 
@@ -129,7 +163,7 @@ const TransportProblemSolver = () => {
           {isSolving ? 'Решение...' : 'Решить задачу'}
         </button>
       </div>
-
+      
       <div className="input-table">
         <h3>Исходные данные</h3>
         <table>
