@@ -254,8 +254,8 @@ const TransportProblemSolver = () => {
         </div>
 
         <div className="action-buttons">
-          <button onClick={addSupplier}>+ Добавить поставщика</button>
-          <button onClick={addConsumer}>+ Добавить потребителя</button>
+          <button onClick={addSupplier}>Добавить поставщика</button>
+          <button onClick={addConsumer}>Добавить потребителя</button>
           <button onClick={generateRandomData}>🎲 Случайные данные</button>
           <button onClick={resetProblem}>Сброс</button>
           <button 
