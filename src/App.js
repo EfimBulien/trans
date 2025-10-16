@@ -103,10 +103,76 @@ const TransportProblemSolver = () => {
     setCosts([...costs, new Array(consumers).fill(1)]);
   };
 
+  const removeSupplier = () => {
+    if (suppliers > 1) {
+      setSuppliers(suppliers - 1);
+      setSupply(supply.slice(0, -1));
+      setCosts(costs.slice(0, -1));
+    }
+  };
+
   const addConsumer = () => {
     setConsumers(consumers + 1);
     setDemand([...demand, 100]);
     setCosts(costs.map(row => [...row, 1]));
+  };
+
+  const removeConsumer = () => {
+    if (consumers > 1) {
+      setConsumers(consumers - 1);
+      setDemand(demand.slice(0, -1));
+      setCosts(costs.map(row => row.slice(0, -1)));
+    }
+  };
+
+  const handleSuppliersCountChange = (value) => {
+    const newCount = parseInt(value) || 1;
+    if (newCount >= 1 && newCount <= 10) {
+      const currentCount = suppliers;
+      setSuppliers(newCount);
+      
+      if (newCount > currentCount) {
+        const additionalSuppliers = newCount - currentCount;
+        const newSupply = [...supply];
+        const newCosts = [...costs];
+        
+        for (let i = 0; i < additionalSuppliers; i++) {
+          newSupply.push(100);
+          newCosts.push(new Array(consumers).fill(1));
+        }
+        
+        setSupply(newSupply);
+        setCosts(newCosts);
+      } else if (newCount < currentCount) {
+        setSupply(supply.slice(0, newCount));
+        setCosts(costs.slice(0, newCount));
+      }
+    }
+  };
+
+  const handleConsumersCountChange = (value) => {
+    const newCount = parseInt(value) || 1;
+    if (newCount >= 1 && newCount <= 10) {
+      const currentCount = consumers;
+      setConsumers(newCount);
+      
+      if (newCount > currentCount) {
+        const additionalConsumers = newCount - currentCount;
+        const newDemand = [...demand];
+        const newCosts = costs.map(row => [...row]);
+        
+        for (let i = 0; i < additionalConsumers; i++) {
+          newDemand.push(100);
+          newCosts.forEach(row => row.push(1));
+        }
+        
+        setDemand(newDemand);
+        setCosts(newCosts);
+      } else if (newCount < currentCount) {
+        setDemand(demand.slice(0, newCount));
+        setCosts(costs.map(row => row.slice(0, newCount)));
+      }
+    }
   };
 
   const resetProblem = () => {
@@ -151,17 +217,55 @@ const TransportProblemSolver = () => {
       <h2>Метод северо-западного угла</h2>
 
       <div className="control-panel">
-        <button onClick={addSupplier}>+ Добавить поставщика</button>
-        <button onClick={addConsumer}>+ Добавить потребителя</button>
-        <button onClick={generateRandomData}>🎲 Случайные данные</button>
-        <button onClick={resetProblem}>Сброс</button>
-        <button 
-          onClick={solveNorthWestCorner} 
-          disabled={isSolving}
-          className="solve-btn"
-        >
-          {isSolving ? 'Решение...' : 'Решить задачу'}
-        </button>
+        <div className="counter-controls">
+          <div className="counter-group">
+            <label>Поставщики:</label>
+            <div className="counter-buttons">
+              <button onClick={removeSupplier}>-</button>
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={suppliers}
+                onChange={(e) => handleSuppliersCountChange(e.target.value)}
+                disabled={isSolving}
+                className="counter-input"
+              />
+              <button onClick={addSupplier}>+</button>
+            </div>
+          </div>
+          
+          <div className="counter-group">
+            <label>Потребители:</label>
+            <div className="counter-buttons">
+              <button onClick={removeConsumer}>-</button>
+              <input
+                type="number"
+                min="1"
+                max="10"
+                value={consumers}
+                onChange={(e) => handleConsumersCountChange(e.target.value)}
+                disabled={isSolving}
+                className="counter-input"
+              />
+              <button onClick={addConsumer}>+</button>
+            </div>
+          </div>
+        </div>
+
+        <div className="action-buttons">
+          <button onClick={addSupplier}>+ Добавить поставщика</button>
+          <button onClick={addConsumer}>+ Добавить потребителя</button>
+          <button onClick={generateRandomData}>🎲 Случайные данные</button>
+          <button onClick={resetProblem}>Сброс</button>
+          <button 
+            onClick={solveNorthWestCorner} 
+            disabled={isSolving}
+            className="solve-btn"
+          >
+            {isSolving ? 'Решение...' : 'Решить задачу'}
+          </button>
+        </div>
       </div>
       
       <div className="input-table">
